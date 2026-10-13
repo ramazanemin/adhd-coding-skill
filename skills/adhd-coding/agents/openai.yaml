@@ -1,0 +1,4 @@
+interface:
+  display_name: "ADHD Coding"
+  short_description: "Focused coding help with less cognitive load"
+  default_prompt: "Use $adhd-coding to help me finish this coding task with clear, focused communication."

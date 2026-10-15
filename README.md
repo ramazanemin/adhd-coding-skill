@@ -50,8 +50,10 @@ The skill does not start timers, save personal health information, or run backgr
 ```text
 skills/adhd-coding/SKILL.md        Portable skill instructions
 skills/adhd-coding/agents/openai.yaml  Optional Codex metadata
-tests/scenarios.md                Behavioral acceptance scenarios
+tests/scenarios.md                Behavioral acceptance scenarios (S1–S10)
 tests/evaluation.md               Recorded checks and their limits
+tests/validate_package.py         Offline package/documentation checks
+tests/live_eval.py                Live baseline-vs-skill AI evaluation runner
 README.tr.md                     Turkish documentation
 LICENSE                          MIT license
 ```
@@ -59,6 +61,22 @@ LICENSE                          MIT license
 ## Validation and contributions
 
 Read the [scenarios](tests/scenarios.md) and [evaluation record](tests/evaluation.md). Behavioral tests judge observable outcomes, including honoring detailed requests and completing authorized work. They are not medical evidence or a promise of identical behavior across models.
+
+Run the offline checks with:
+
+```bash
+python3 tests/validate_package.py
+```
+
+Run the live comparison (S1–S10, isolated baseline vs. skill-loaded calls; JSON results go to git-ignored `work/`) with:
+
+```bash
+python3 tests/live_eval.py
+python3 tests/live_eval.py --scenarios S1,S2,S3
+AI_API_BASE_URL=https://your-openai-compatible-endpoint AI_API_KEY=... AI_MODEL=... python3 tests/live_eval.py
+```
+
+Provider resolution order is explicit flags, then `AI_API_BASE_URL` / `AI_API_KEY` / `AI_MODEL`, then local Cline auth, then the free anonymous OpenAI-compatible fallback.
 
 To suggest an improvement, describe the user request, the observed response, and the desired behavior. Use fictional or anonymized examples. Keep additions focused on coding collaboration, and retest affected scenarios.
 

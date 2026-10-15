@@ -49,6 +49,19 @@ Skill kendiliğinden zamanlayıcı başlatmaz, kişisel sağlık bilgisi kaydetm
 
 [Senaryolar](tests/scenarios.md) ve [değerlendirme kaydı](tests/evaluation.md), hangi davranışların kontrol edildiğini ve testlerin sınırlarını açıklar. Ayrıntılı istekleri yerine getirme ve izin verilmiş işi tamamlama da kapsama dahildir. Sonuçlar tıbbi kanıt veya her modelde aynı davranışın garantisi değildir.
 
+Çevrim dışı kontroller:
+
+```bash
+python3 tests/validate_package.py
+```
+
+Canlı karşılaştırma (S1–S10; JSON sonuçları git dışı `work/` altına yazılır):
+
+```bash
+python3 tests/live_eval.py
+python3 tests/live_eval.py --scenarios S1,S2,S3
+```
+
 İyileştirme önerirken kullanıcı isteğini, gözlenen yanıtı ve beklediğin davranışı yaz. Kurgusal veya anonimleştirilmiş örnekler kullan. Değişiklikleri kodlama iş birliğine odakla ve etkilenen senaryoları tekrar dene.
 
 [MIT Lisansı](LICENSE).

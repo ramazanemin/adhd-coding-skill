@@ -29,6 +29,17 @@ Codex supports repository skills in `.agents/skills` and user skills in `~/.agen
 
 For another Agent Skills-compatible coding assistant, follow that host's installation instructions and install the same skill folder. This repository does not claim that every host has been tested. The optional `agents/openai.yaml` file provides Codex metadata.
 
+## Install in Cline
+
+Cline does not use the `.agents/skills` format. Instead, paste the instructions into Cline's **Custom Instructions** (Cline settings → Custom Instructions), or into a project rules file such as `.clinerules` if your Cline version supports it.
+
+1. Open [skills/adhd-coding/CLINE.md](skills/adhd-coding/CLINE.md).
+2. Copy its full contents.
+3. Paste them into Cline's Custom Instructions and save.
+4. Start a coding chat; the preferences apply automatically to every conversation.
+
+The Cline instructions mirror the Codex skill but are written as standalone custom instructions, without YAML frontmatter or a `$adhd-coding` invocation.
+
 ## Try it
 
 ```text
@@ -49,6 +60,7 @@ The skill does not start timers, save personal health information, or run backgr
 
 ```text
 skills/adhd-coding/SKILL.md        Portable skill instructions
+skills/adhd-coding/CLINE.md        Cline custom-instructions version
 skills/adhd-coding/agents/openai.yaml  Optional Codex metadata
 tests/scenarios.md                Behavioral acceptance scenarios (S1–S10)
 tests/evaluation.md               Recorded checks and their limits

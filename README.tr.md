@@ -29,6 +29,17 @@ Codex, proje skill'lerini `.agents/skills`, kullanıcı skill'lerini `~/.agents/
 
 Başka bir Agent Skills destekli kodlama asistanında aynı skill klasörünü, o ürünün kurulum talimatlarına göre kullan. Her ürünün test edildiği iddia edilmez. `agents/openai.yaml`, isteğe bağlı Codex metaverisini içerir.
 
+## Cline'a kurulum
+
+Cline, `.agents/skills` biçimini kullanmaz. Bunun yerine talimatları Cline'ın **Custom Instructions** (Özel Talimatlar) bölümüne (Cline ayarları → Custom Instructions) veya sürümünüz destekliyorsa `.clinerules` gibi proje düzeyinde bir kural dosyasına yapıştırın.
+
+1. [skills/adhd-coding/CLINE.md](skills/adhd-coding/CLINE.md) dosyasını aç.
+2. Tüm içeriği kopyala.
+3. Cline'ın Custom Instructions alanına yapıştır ve kaydet.
+4. Bir kodlama sohbeti başlat; tercihler her sohbete otomatik uygulanır.
+
+Cline talimatları Codex skill'ini yansıtır, ancak YAML frontmatter ve `$adhd-coding` çağrısı olmadan bağımsız özel talimatlar olarak yazılmıştır.
+
 ## Deneme istekleri
 
 ```text

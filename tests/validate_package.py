@@ -21,6 +21,7 @@ import sys
 
 ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL_MD = ROOT / "skills" / "adhd-coding" / "SKILL.md"
+CLINE_MD = ROOT / "skills" / "adhd-coding" / "CLINE.md"
 OPENAI_YAML = ROOT / "skills" / "adhd-coding" / "agents" / "openai.yaml"
 LIVE_EVAL_PY = ROOT / "tests" / "live_eval.py"
 SCENARIOS_MD = ROOT / "tests" / "scenarios.md"
@@ -29,6 +30,7 @@ MARKDOWN_FILES = [
     ROOT / "README.md",
     ROOT / "README.tr.md",
     SKILL_MD,
+    CLINE_MD,
     ROOT / "tests" / "scenarios.md",
     ROOT / "tests" / "evaluation.md",
 ]

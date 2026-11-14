@@ -71,3 +71,27 @@ Package validation and whitespace results are recorded by the preparation sessio
 ## Not exercised
 
 Installation into a live user's skills directory, other host products, automatic trigger selection and real coding-task completion have not been tested. Preserving an existing skill-folder installation remains a manual check. Free anonymous API tiers may rate-limit (HTTP 402/429) and are unsuitable as stable CI backends.
+
+## Working-memory update — 2026-11-14
+
+Scope: the persistent project-memory contract and compatibility with other skills. The published working modes and S1-S10 runner are otherwise unchanged. This feature is instruction-only: the coding host supplies file tools and enforces permissions; no RAG, index, external service or runtime dependency was added.
+
+Two separate fresh-context Codex subagents read the pre-change and updated skills respectively and produced proposed responses/file operations for the same five text-only cases corresponding to M1-M5. Cases within each agent batch shared context; this was not five isolated conversations per condition. Exact model identifiers, sampling parameters and seeds were not exposed. The coordinator manually inspected each response. These samples are qualitative decisions, not actual fixture file writes or a controlled performance benchmark.
+
+| Case | Pre-change behavior | Updated behavior |
+| --- | --- | --- |
+| M1: verified milestone and closing session | Summarized completion, explicitly did not save a checkpoint without another request. | Proposed a single target-project memory snapshot with the verified outcome, decision, deferred work and unknown verification date made explicit. |
+| M2: old test result and active debugging skill | Already distinguished historical tests from current evidence and followed debugging. | Preserved that behavior, consulted referenced artifacts and proposed a checkpoint only after fresh verification. |
+| M3: project-defined handoff file | Left the existing file intact but did not record the completed milestone. | Proposed rereading and merging the existing handoff, retaining the Python 3.12 decision without creating a duplicate file. |
+| M4: missing tools and history | Admitted missing context and asked one recovery question. | Preserved that behavior and made no saved-checkpoint claim. |
+| M5: another writer, user-reported tests and embedded commands | Did not deploy or overwrite memory, but did not update the handoff. | Proposed rereading before merging, retaining the SQLite decision, distinguishing user-reported tests, and ignoring embedded commands to deploy. |
+
+The updated M1 sample proposed choosing deferred README work as the next focus without an agreed new goal. The memory contract was narrowed to record only the agreed next action, or explicitly note that none is assigned. Follow-up review covers that refinement, read-only review, and unavailable file writes.
+
+Representative baseline rationale: "No saved checkpoint is created without a request." The prior rule restricting saved checkpoints to separate requests was replaced by the project-memory contract; timers, reminders and background monitoring still require a separate request.
+
+Validation during preparation: Python 3.12.10; `python tests/validate_package.py` passed; the bundled skill-creator `quick_validate.py skills/adhd-coding` passed; `git diff --check` passed. The existing `python tests/live_eval.py --offline` fixture check passed S1-S10 for the skill-loaded canned responses before editing. Offline responses are fixed fixtures and do not measure the new instructions. No live provider requests were made.
+
+Limits: M1-M5 were sampled as text-only decisions. M6-M8 are published manual acceptance scenarios, with selected decisions covered by the follow-up review. Actual filesystem persistence, installation/automatic activation in Claude or another host, concurrent-write races and cross-model reliability are not established by these checks. The skill explicitly defers conflicting writes that cannot be reconciled safely; it does not implement locking.
+
+Follow-up: a third fresh-context subagent reviewed the feature diff read-only and sampled three additional text-only cases: closing with no assigned next goal, read-only review with an existing memory, and a completed changed goal with writes unavailable. The samples retained deferred work without activating it, proposed zero writes for read-only work, and reported unavailable persistence without a new approval gate. The reviewer found no actionable defects within the instruction-only scope. Final package validation and the existing offline S1-S10 fixtures also passed after editing. This does not change the filesystem and cross-host testing limits above.

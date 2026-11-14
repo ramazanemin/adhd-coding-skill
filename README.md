@@ -29,6 +29,10 @@ Codex supports repository skills in `.agents/skills` and user skills in `~/.agen
 
 For another Agent Skills-compatible coding assistant, follow that host's installation instructions and install the same skill folder. This repository does not claim that every host has been tested. The optional `agents/openai.yaml` file provides Codex metadata.
 
+## Project working memory
+
+For ongoing project work, the skill keeps a single concise prose snapshot in the target project's `WORKING_MEMORY.md`, or reuses the equivalent handoff file designated by project instructions. It records the goal, verified state, decisions, changed paths, dated test results, blockers, deferred ideas and next action after meaningful milestones or handoffs. On resume, the assistant reads the snapshot and checks the current files; historical results are not a fresh verification. It references other skills' plans and reports while preserving their workflows, checks and permissions. It does not create memory for standalone questions or read-only tasks; you can ask it to stop updating memory. File tools and write permission are required, and saving the file does not guarantee a host will load the skill in a future session. No RAG, external service or runtime dependency is added. See the [working-memory acceptance scenarios](tests/scenarios.md#working-memory-and-skill-compatibility).
+
 ## Try it
 
 ```text

@@ -29,6 +29,10 @@ Codex, proje skill'lerini `.agents/skills`, kullanıcı skill'lerini `~/.agents/
 
 Başka bir Agent Skills destekli kodlama asistanında aynı skill klasörünü, o ürünün kurulum talimatlarına göre kullan. Her ürünün test edildiği iddia edilmez. `agents/openai.yaml`, isteğe bağlı Codex metaverisini içerir.
 
+## Proje çalışma hafızası
+
+Devam eden proje işlerinde skill, hedef projenin `WORKING_MEMORY.md` dosyasında tek ve kısa bir metin tutar; proje kuralları eşdeğer bir devir dosyası belirtiyorsa onu kullanır. Anlamlı aşamalarda veya oturum devrinde hedefi, doğrulanmış durumu, kararları, değişen dosya yollarını, tarihli test sonuçlarını, engelleri, ertelenen fikirleri ve sıradaki adımı kaydeder. Devam ederken kaydı okur ve mevcut dosyaları kontrol eder; geçmiş sonuçları yeni doğrulama gibi sunmaz. Diğer skill'lerin plan ve raporlarına yollarıyla atıf yapar; iş akışlarını, kontrollerini ve izinlerini korur. Tekil sorular veya salt okunur işler için hafıza oluşturmaz; istediğinde hafıza güncellemelerini durdurabilirsin. Dosya araçları ve yazma izni gerekir; kaydın bulunması, sonraki oturumda skill'in otomatik yükleneceğini garanti etmez. RAG, harici servis veya çalışma zamanı bağımlılığı eklenmez. [Çalışma hafızası kabul senaryolarına](tests/scenarios.md#working-memory-and-skill-compatibility) bak.
+
 ## Deneme istekleri
 
 ```text

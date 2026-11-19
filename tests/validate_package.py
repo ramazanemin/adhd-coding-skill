@@ -6,9 +6,10 @@ Checks:
 2. SKILL.md YAML frontmatter fields (name, description) and non-empty body.
 3. agents/openai.yaml interface fields and $adhd-coding prompt reference.
 4. Local relative Markdown links across all Markdown files.
-5. Scenario coverage: S1-S10 present in tests/scenarios.md table and tests/live_eval.py.
+5. Scenario coverage: S1-S14 present in tests/scenarios.md table and tests/live_eval.py.
 6. Python compilation of tests/*.py.
 7. Git whitespace check (`git diff --check`).
+8. CI workflow presence and the commands it must run.
 """
 
 from __future__ import annotations
@@ -23,15 +24,24 @@ ROOT = pathlib.Path(__file__).resolve().parent.parent
 SKILL_MD = ROOT / "skills" / "adhd-coding" / "SKILL.md"
 OPENAI_YAML = ROOT / "skills" / "adhd-coding" / "agents" / "openai.yaml"
 LIVE_EVAL_PY = ROOT / "tests" / "live_eval.py"
+TEST_LIVE_EVAL_PY = ROOT / "tests" / "test_live_eval.py"
 SCENARIOS_MD = ROOT / "tests" / "scenarios.md"
-EXPECTED_SCENARIOS = [f"S{i}" for i in range(1, 11)]
+CHANGELOG_MD = ROOT / "CHANGELOG.md"
+CI_WORKFLOW = ROOT / ".github" / "workflows" / "validate.yml"
+EXPECTED_SCENARIOS = [f"S{i}" for i in range(1, 15)]
 MARKDOWN_FILES = [
     ROOT / "README.md",
     ROOT / "README.tr.md",
+    CHANGELOG_MD,
     SKILL_MD,
     ROOT / "tests" / "scenarios.md",
     ROOT / "tests" / "evaluation.md",
 ]
+CI_REQUIRED_SNIPPETS = (
+    "unittest discover",
+    "tests/validate_package.py",
+    "tests/live_eval.py --offline",
+)
 
 
 def check_frontmatter(path: pathlib.Path, errors: list[str]) -> None:
@@ -91,7 +101,14 @@ def check_markdown_links(md_files: list[pathlib.Path], errors: list[str]) -> Non
 
 
 def check_text_hygiene(errors: list[str]) -> None:
-    paths = [*(p for p in MARKDOWN_FILES), OPENAI_YAML, LIVE_EVAL_PY, pathlib.Path(__file__)]
+    paths = [
+        *(p for p in MARKDOWN_FILES),
+        OPENAI_YAML,
+        LIVE_EVAL_PY,
+        TEST_LIVE_EVAL_PY,
+        CI_WORKFLOW,
+        pathlib.Path(__file__),
+    ]
     for path in paths:
         if not path.is_file():
             errors.append(f"Missing tracked file: {path}")
@@ -128,11 +145,23 @@ def check_scenario_coverage(errors: list[str]) -> None:
 
 
 def check_python_compile(errors: list[str]) -> None:
-    for script in (pathlib.Path(__file__), LIVE_EVAL_PY):
+    for script in (pathlib.Path(__file__), LIVE_EVAL_PY, TEST_LIVE_EVAL_PY):
         try:
             py_compile.compile(str(script), doraise=True)
         except py_compile.PyCompileError as exc:
             errors.append(f"{script.relative_to(ROOT)}: compile failed: {exc}")
+
+
+def check_ci_workflow(errors: list[str]) -> None:
+    if not CI_WORKFLOW.is_file():
+        errors.append(f"Missing CI workflow: {CI_WORKFLOW.relative_to(ROOT)}")
+        return
+    text = CI_WORKFLOW.read_text(encoding="utf-8")
+    for snippet in CI_REQUIRED_SNIPPETS:
+        if snippet not in text:
+            errors.append(
+                f"{CI_WORKFLOW.relative_to(ROOT)}: missing required step '{snippet}'"
+            )
 
 
 def check_git_whitespace(errors: list[str]) -> None:
@@ -155,6 +184,7 @@ def main() -> int:
     check_text_hygiene(errors)
     check_scenario_coverage(errors)
     check_python_compile(errors)
+    check_ci_workflow(errors)
     check_git_whitespace(errors)
 
     if errors:
@@ -163,7 +193,7 @@ def main() -> int:
             print(f"  - {err}", file=sys.stderr)
         return 1
 
-    print("Skill is valid! All package, metadata, link, coverage, hygiene, and whitespace checks passed.")
+    print("Skill is valid! All package, metadata, link, coverage, hygiene, CI and whitespace checks passed.")
     return 0
 
 

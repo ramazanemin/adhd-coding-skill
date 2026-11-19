@@ -31,7 +31,7 @@ Başka bir Agent Skills destekli kodlama asistanında aynı skill klasörünü, 
 
 ## Proje çalışma hafızası
 
-Devam eden proje işlerinde skill, hedef projenin `WORKING_MEMORY.md` dosyasında tek ve kısa bir metin tutar; proje kuralları eşdeğer bir devir dosyası belirtiyorsa onu kullanır. Anlamlı aşamalarda veya oturum devrinde hedefi, doğrulanmış durumu, kararları, değişen dosya yollarını, tarihli test sonuçlarını, engelleri, ertelenen fikirleri ve sıradaki adımı kaydeder. Devam ederken kaydı okur ve mevcut dosyaları kontrol eder; geçmiş sonuçları yeni doğrulama gibi sunmaz. Diğer skill'lerin plan ve raporlarına yollarıyla atıf yapar; iş akışlarını, kontrollerini ve izinlerini korur. Tekil sorular veya salt okunur işler için hafıza oluşturmaz; istediğinde hafıza güncellemelerini durdurabilirsin. Dosya araçları ve yazma izni gerekir; kaydın bulunması, sonraki oturumda skill'in otomatik yükleneceğini garanti etmez. RAG, harici servis veya çalışma zamanı bağımlılığı eklenmez. [Çalışma hafızası kabul senaryolarına](tests/scenarios.md#working-memory-and-skill-compatibility) bak.
+Devam eden proje işlerinde skill, hedef projenin `WORKING_MEMORY.md` dosyasında tek ve kısa bir metin tutar; proje kuralları eşdeğer bir devir dosyası belirtiyorsa onu kullanır. Anlamlı aşamalarda veya oturum devrinde hedefi, doğrulanmış durumu, kararları, değişen dosya yollarını, tarihli test sonuçlarını, engelleri, ertelenen fikirleri ve sıradaki adımı kaydeder. Devam ederken kaydı okur ve mevcut dosyaları kontrol eder; geçmiş sonuçları yeni doğrulama gibi sunmaz. Diğer skill'lerin plan ve raporlarına yollarıyla atıf yapar; iş akışlarını, kontrollerini ve izinlerini korur. Tekil sorular veya salt okunur işler için hafıza oluşturmaz; istediğinde hafıza güncellemelerini durdurabilirsin. Dosya araçları ve yazma izni gerekir; kaydın bulunması, sonraki oturumda skill'in otomatik yükleneceğini garanti etmez. Paralel çalışmada hafızayı proje için belirlenen tek yazar günceller; diğer ajanlar okudukları sürümü ve önce/sonra bilgilerini devir mesajıyla iletir. Yazar bağımsız değişiklikleri birleştirir, çözülmeyen çelişkileri yeni kararların üzerine yazmadan bildirir. Bu, Git benzeri bir koordinasyon kuralıdır; otomatik Git merge veya çalışma zamanı kilidi sağlamaz ve tüm yazarların aynı kurala uymasını gerektirir. RAG, harici servis veya çalışma zamanı bağımlılığı eklenmez. [Çalışma hafızası kabul senaryolarına](tests/scenarios.md#working-memory-and-skill-compatibility) bak.
 
 ## Deneme istekleri
 
@@ -57,14 +57,18 @@ Skill kendiliğinden zamanlayıcı başlatmaz, kişisel sağlık bilgisi kaydetm
 
 ```bash
 python3 tests/validate_package.py
+python3 -m unittest discover -s tests -p "test_*.py" -v
+python3 tests/live_eval.py --offline
 ```
 
-Canlı karşılaştırma (S1–S10; JSON sonuçları git dışı `work/` altına yazılır):
+Son komut sabit yanıt örneklerini senaryo denetleyicilerine karşı çalıştırır; bir model çağırmaz. Canlı karşılaştırma (S1–S14; istekler varsayılan olarak sıralı çalışır, JSON sonuçları git dışı `work/` altına yazılır):
 
 ```bash
 python3 tests/live_eval.py
 python3 tests/live_eval.py --scenarios S1,S2,S3
 ```
+
+Depoda ayrıca `.github/workflows/validate.yml` birim testleri, paket doğrulamasını ve çevrim dışı fixture kontrolünü push ve pull request üzerinde çalıştırır. Değişiklikler [CHANGELOG.md](CHANGELOG.md) içinde tarihli olarak tutulur.
 
 İyileştirme önerirken kullanıcı isteğini, gözlenen yanıtı ve beklediğin davranışı yaz. Kurgusal veya anonimleştirilmiş örnekler kullan. Değişiklikleri kodlama iş birliğine odakla ve etkilenen senaryoları tekrar dene.
 

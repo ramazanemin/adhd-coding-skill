@@ -31,7 +31,7 @@ For another Agent Skills-compatible coding assistant, follow that host's install
 
 ## Project working memory
 
-For ongoing project work, the skill keeps a single concise prose snapshot in the target project's `WORKING_MEMORY.md`, or reuses the equivalent handoff file designated by project instructions. It records the goal, verified state, decisions, changed paths, dated test results, blockers, deferred ideas and next action after meaningful milestones or handoffs. On resume, the assistant reads the snapshot and checks the current files; historical results are not a fresh verification. It references other skills' plans and reports while preserving their workflows, checks and permissions. It does not create memory for standalone questions or read-only tasks; you can ask it to stop updating memory. File tools and write permission are required, and saving the file does not guarantee a host will load the skill in a future session. No RAG, external service or runtime dependency is added. See the [working-memory acceptance scenarios](tests/scenarios.md#working-memory-and-skill-compatibility).
+For ongoing project work, the skill keeps a single concise prose snapshot in the target project's `WORKING_MEMORY.md`, or reuses the equivalent handoff file designated by project instructions. It records the goal, verified state, decisions, changed paths, dated test results, blockers, deferred ideas and next action after meaningful milestones or handoffs. On resume, the assistant reads the snapshot and checks the current files; historical results are not a fresh verification. It references other skills' plans and reports while preserving their workflows, checks and permissions. It does not create memory for standalone questions or read-only tasks; you can ask it to stop updating memory. File tools and write permission are required, and saving the file does not guarantee a host will load the skill in a future session. In parallel work, one designated project writer updates memory; other agents hand off versioned before/after facts. The writer merges independent changes and reports unresolved conflicts without replacing newer decisions. This is a Git-like coordination rule, not automatic Git merging or a runtime lock; all writers must follow it. No RAG, external service or runtime dependency is added. See the [working-memory acceptance scenarios](tests/scenarios.md#working-memory-and-skill-compatibility).
 
 ## Try it
 
@@ -54,10 +54,13 @@ The skill does not start timers, save personal health information, or run backgr
 ```text
 skills/adhd-coding/SKILL.md        Portable skill instructions
 skills/adhd-coding/agents/openai.yaml  Optional Codex metadata
-tests/scenarios.md                Behavioral acceptance scenarios (S1–S10)
+tests/scenarios.md                Behavioral acceptance scenarios (S1–S14)
 tests/evaluation.md               Recorded checks and their limits
 tests/validate_package.py         Offline package/documentation checks
 tests/live_eval.py                Live baseline-vs-skill AI evaluation runner
+tests/test_live_eval.py           Unit tests for the evaluation runner
+.github/workflows/validate.yml    CI: unit tests, package checks, offline fixtures
+CHANGELOG.md                      Changes by date
 README.tr.md                     Turkish documentation
 LICENSE                          MIT license
 ```
@@ -70,9 +73,11 @@ Run the offline checks with:
 
 ```bash
 python3 tests/validate_package.py
+python3 -m unittest discover -s tests -p "test_*.py" -v
+python3 tests/live_eval.py --offline
 ```
 
-Run the live comparison (S1–S10, isolated baseline vs. skill-loaded calls; JSON results go to git-ignored `work/`) with:
+The last command compares fixed fixtures against the scenario checkers; it does not call a model. Live comparison (S1–S14, isolated baseline vs. skill-loaded calls; requests are sequential by default and JSON results go to git-ignored `work/`):
 
 ```bash
 python3 tests/live_eval.py

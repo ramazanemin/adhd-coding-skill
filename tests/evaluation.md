@@ -190,3 +190,11 @@ The repository is English-only from this revision. Concretely:
 - `CHANGELOG.md` was added and is maintained in English.
 
 The diagrams are documentation, not evidence. They describe what `SKILL.md` instructs the assistant to do and what `tests/live_eval.py` checks; they were not produced by running a model.
+
+### Activation test — added, not yet executed
+
+`tests/trigger-test.md` was added after a skill-authoring review pointed out that S1–S14 measure behavior *after* loading but never measure loading itself. It specifies six prompts in fresh conversations: three that must activate the skill (low-overwhelm request, resuming a session, explicit one-step request) and three that must not (an ordinary technical question, a normal refactor request, a typo-ridden one-liner).
+
+`tests/validate_package.py` now enforces that the file exists, that it keeps at least three load and two non-load rows, that it states its execution status, and that the `SKILL.md` description contains both a "Use when" and a "Do not" clause.
+
+This test has not been executed against a live host, so it records no result. It cannot be automated here: `tests/live_eval.py` injects the instructions into every request, which bypasses host-side activation entirely. Until a real run is recorded, treat activation as unverified.

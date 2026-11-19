@@ -26,6 +26,7 @@ OPENAI_YAML = ROOT / "skills" / "adhd-coding" / "agents" / "openai.yaml"
 LIVE_EVAL_PY = ROOT / "tests" / "live_eval.py"
 TEST_LIVE_EVAL_PY = ROOT / "tests" / "test_live_eval.py"
 SCENARIOS_MD = ROOT / "tests" / "scenarios.md"
+TRIGGER_TEST_MD = ROOT / "tests" / "trigger-test.md"
 CHANGELOG_MD = ROOT / "CHANGELOG.md"
 CI_WORKFLOW = ROOT / ".github" / "workflows" / "validate.yml"
 EXPECTED_SCENARIOS = [f"S{i}" for i in range(1, 15)]
@@ -34,6 +35,7 @@ MARKDOWN_FILES = [
     CHANGELOG_MD,
     SKILL_MD,
     ROOT / "tests" / "scenarios.md",
+    TRIGGER_TEST_MD,
     ROOT / "tests" / "evaluation.md",
 ]
 CI_REQUIRED_SNIPPETS = (
@@ -175,6 +177,40 @@ def check_git_whitespace(errors: list[str]) -> None:
         errors.append(f"git diff --check reported whitespace issues:\n{proc.stdout.strip()}")
 
 
+def check_trigger_test(errors: list[str]) -> None:
+    """The trigger description must be testable and the test must exist.
+
+    A skill that never activates looks identical to a skill that is not
+    installed, so activation needs its own artifact plus a description that
+    states both when to load and when not to.
+    """
+    if not TRIGGER_TEST_MD.is_file():
+        errors.append(f"Missing trigger test: {TRIGGER_TEST_MD.relative_to(ROOT)}")
+    else:
+        text = TRIGGER_TEST_MD.read_text(encoding="utf-8")
+        load_rows = len(re.findall(r"(?m)^\| T\d+ \|", text))
+        skip_rows = len(re.findall(r"(?m)^\| N\d+ \|", text))
+        if load_rows < 3:
+            errors.append(
+                f"{TRIGGER_TEST_MD.relative_to(ROOT)}: needs at least 3 should-load rows (found {load_rows})"
+            )
+        if skip_rows < 2:
+            errors.append(
+                f"{TRIGGER_TEST_MD.relative_to(ROOT)}: needs at least 2 should-not-load rows (found {skip_rows})"
+            )
+        if "not been executed" not in text.lower():
+            errors.append(
+                f"{TRIGGER_TEST_MD.relative_to(ROOT)}: must state whether the test has been run"
+            )
+    if SKILL_MD.is_file():
+        text = SKILL_MD.read_text(encoding="utf-8")
+        frontmatter = text.split("\n---\n", 1)[0]
+        if "Use when" not in frontmatter:
+            errors.append("SKILL.md: description must state when to load the skill ('Use when ...')")
+        if "Do not" not in frontmatter:
+            errors.append("SKILL.md: description must state when not to load the skill ('Do not ...')")
+
+
 def main() -> int:
     errors: list[str] = []
     check_frontmatter(SKILL_MD, errors)
@@ -182,6 +218,7 @@ def main() -> int:
     check_markdown_links(MARKDOWN_FILES, errors)
     check_text_hygiene(errors)
     check_scenario_coverage(errors)
+    check_trigger_test(errors)
     check_python_compile(errors)
     check_ci_workflow(errors)
     check_git_whitespace(errors)

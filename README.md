@@ -235,7 +235,7 @@ Safety depends on all participants honoring the same writer. That is a documente
 
 ## Acceptance scenarios
 
-Fourteen automated text scenarios (S1–S14) and twelve tool-aware memory scenarios (M1–M12) define what "working" means. The pass criteria are written down, not implied: see [tests/scenarios.md](tests/scenarios.md).
+Fourteen automated text scenarios (S1–S14), twelve tool-aware memory scenarios (M1–M12) and a six-prompt activation test define what "working" means. The pass criteria are written down, not implied: see [tests/scenarios.md](tests/scenarios.md) and [tests/trigger-test.md](tests/trigger-test.md).
 
 | IDs | Theme | Example check |
 | --- | --- | --- |
@@ -259,12 +259,15 @@ flowchart LR
 
 The offline mode feeds fixed fixtures through the same checkers. It is a self-check of the test harness, never evidence about a model.
 
+Activation is a separate failure mode: a skill that never loads looks exactly like a skill that is not installed. [tests/trigger-test.md](tests/trigger-test.md) pins six prompts in fresh conversations — three that must load it (low-overwhelm, resuming, explicit one-step) and three that must not (ordinary questions, a normal refactor request, a typo-ridden one-liner). A false positive is the worse miss, because it applies ADHD preferences to someone who never asked.
+
 ## Repository layout
 
 ```text
 skills/adhd-coding/SKILL.md              Portable skill instructions (the actual product)
 skills/adhd-coding/agents/openai.yaml    Optional Codex interface metadata
 tests/scenarios.md                       Acceptance scenarios S1-S14 and M1-M12
+tests/trigger-test.md                    Activation test: 3 prompts must load, 3 must not
 tests/evaluation.md                      Dated results, method, and limits
 tests/validate_package.py                Package, docs, coverage, CI, and whitespace checks
 tests/live_eval.py                       Baseline-vs-skill runner with offline fixtures

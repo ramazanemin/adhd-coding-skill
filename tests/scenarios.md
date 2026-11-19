@@ -25,6 +25,7 @@ Prompts are written in English. If a model answers in another language, the auto
 
 - Existing installation: installation instructions must preserve an existing skill folder rather than overwrite it silently.
 - The automated runner below covers S1–S14 response behavior. It does not prove autonomous tool use, cross-model reliability, or installation behavior.
+- Activation is tested separately in [trigger-test.md](trigger-test.md): six prompts in fresh conversations, three that must load the skill and three that must not. A behavior pass with a trigger miss means the user never sees the improvement.
 - S11–S14 are text-level checks of the memory contract; only a manual run with file tools can confirm the actual file state.
 
 ## Automated runners

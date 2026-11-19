@@ -34,6 +34,8 @@ entries are grouped by date rather than by version number.
 
 ### Added
 
+- `tests/trigger-test.md`: a six-prompt activation test (three prompts that must load the skill, three that must not) with a pass rule and a recording template.
+- `tests/validate_package.py` now enforces that artifact, and that the SKILL.md description states both when to load the skill and when not to.
 - S11–S14 offline fixtures and checkers for the working-memory contract.
 - `tests/test_live_eval.py` (37 standard-library tests, no network).
 - `.github/workflows/validate.yml` runs the unit tests, package validation and

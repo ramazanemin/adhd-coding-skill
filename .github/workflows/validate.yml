@@ -1,0 +1,38 @@
+name: validate
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  checks:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Evaluation runner unit tests (no network)
+        run: python -m unittest discover -s tests -p "test_*.py" -v
+
+      - name: Package and documentation validation
+        run: python tests/validate_package.py
+
+      - name: Offline fixture evaluation (no network)
+        run: python tests/live_eval.py --offline --output work/offline-fixtures.json
+
+      - name: Upload fixture evaluation artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: offline-fixtures
+          path: work/offline-fixtures.json
+          if-no-files-found: error

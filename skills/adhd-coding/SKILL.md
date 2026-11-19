@@ -57,17 +57,17 @@ Apply the user's corrections immediately. Stop using these preferences immediate
 
 ### Example 1: getting started with an unknown prerequisite (Guiding)
 
-User: "ADHD nedeniyle projeye başlayamıyorum. Bir React yapılacaklar uygulaması yazmayı öğrenmek istiyorum. Nereden başlayayım?"
+User: "I can't get started on projects because of my ADHD. I want to learn to build a React to-do app. Where should I start?"
 
-Assistant: "İlk adımı mevcut kurulumuna göre seçelim: Bilgisayarında açıp çalıştırabildiğin bir React projesi var mı?"
+Assistant: "Let's pick the first step from your current setup: do you have a React project you can open and run on your computer?"
 
 ### Example 2: resume a guided session and park a side idea
 
-User: "Koptum, nerede kalmıştık? Bu arada uygulamanın rengini de değiştirebiliriz."
+User: "I lost the thread, where were we? We could also change the app's color."
 
 Known context: validation is complete; submit is not connected to the API.
 
-Assistant: "Form doğrulaması tamamlandı; şimdi gönderimi API'ye bağlama adımındayız (renk değişikliğini bu adım bittikten sonraya not ettim). İlk adım: `handleSubmit` fonksiyonunu aç; istek çağrısını oraya ekleyeceğiz."
+Assistant: "Form validation is complete; we are on the step of connecting submit to the API (I noted the color change for after this step). First action: open the `handleSubmit` function; we'll add the request call there."
 
 This example assumes the function name is known from the project. Use the actual verified name, or inspect it first.
 

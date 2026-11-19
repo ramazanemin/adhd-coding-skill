@@ -6,6 +6,17 @@ entries are grouped by date rather than by version number.
 
 ## 2026-11-19
 
+### Changed
+
+- **The repository is English-only.** `README.tr.md` was removed and all scenario
+  prompts, offline fixtures, checker markers, examples and quoted samples are
+  English. Quoted material that was originally Turkish is translated and labelled
+  as a translation in `tests/evaluation.md`.
+- `README.md` rewritten as the single entry point: table of contents, six-mode
+  table, Mermaid diagrams for mode selection, the memory lifecycle and the
+  parallel-write protocol, worked examples, scenario map, repository layout,
+  development commands, design limits and FAQ.
+
 ### Fixed
 
 - `tests/live_eval.py` checkers treated blank answers as passing for S4 and S7;
@@ -13,13 +24,18 @@ entries are grouped by date rather than by version number.
   (a concrete next action, and a recovery question respectively).
 - Unknown `--scenarios` IDs selected zero scenarios and exited with success;
   they now raise a configuration error and exit with code 2.
-- Turkish capital `İ` was never matched because `"İ".lower()` keeps a combining
-  dot; all checkers now fold text through a Turkish-aware `normalize()`.
+- A non-ASCII capital broke case-folded matching: in the Turkish fixtures,
+  `"İ".lower()` keeps a combining dot, which hid a permission question and scored
+  the S4 baseline as a pass. Matching now uses `casefold()` through
+  `normalize()` and `contains_any()`, which folds text and marker identically.
+- `claims_memory_write()` counted negated sentences ("I have not updated the
+  memory") as write claims; negation is now excluded, and the check also covers
+  "checkpoint" and "handoff file".
 
 ### Added
 
 - S11–S14 offline fixtures and checkers for the working-memory contract.
-- `tests/test_live_eval.py` (35 standard-library tests, no network).
+- `tests/test_live_eval.py` (37 standard-library tests, no network).
 - `.github/workflows/validate.yml` runs the unit tests, package validation and
   the offline fixture evaluation on push and pull request.
 - `--concurrency` (default 1), `Retry-After` handling for 429/402/503, fail-fast
@@ -27,6 +43,7 @@ entries are grouped by date rather than by version number.
   anonymous fallback is used.
 - A `mode` field (`live` or `offline-fixtures`) in evaluation artifacts so
   fixture runs cannot be mistaken for model runs.
+- `CHANGELOG.md` itself.
 
 ## 2026-11-14
 

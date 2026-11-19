@@ -47,11 +47,11 @@ The parent agent manually compared each actual response with the observable crit
 
 Representative skill-loaded outputs:
 
-> S1: İlk adımı mevcut kurulumuna göre seçelim: Bilgisayarında açıp çalıştırabildiğin hazır bir React projesi var mı?
+> S1: Let's pick the first step from your current setup: do you have a React project you can open and run on your computer?
 
-> S2: Tamamlanan: Giriş formu doğrulaması bitti. Şu anki hedef: Form gönderimini (submit) API'ye bağlamak (renk değişikliğini bu adım bittikten sonraya park ettim). Sıradaki adım: ...
+> S2: Done: form validation is complete. Current goal: connect submit to the API (I parked the color change for after this step). Next step: ...
 
-> S4: Hatayı tespit etmek için şimdi proje dosyalarını inceliyor ve mevcut testleri çalıştırıyorum. ...
+> S4: To find the error I'm now inspecting the project files and running the existing tests. ...
 
 Artifacts (git-ignored): `work/live_eval_results.json`, `work/eval_s1_s5.json`, `work/eval_s6_s10.json`, `work/live_eval.log`.
 
@@ -102,7 +102,7 @@ A later test exercised actual filesystem writes, rather than only the text-only 
 
 User prompt (identical in both conditions):
 
-> Küçük bir iş takip sistemi için tek sayfalık web sitesi yap. HTML, CSS ve JavaScript kullan. Görev ekleme, tamamlandı işaretleme ve tümü/aktif/tamamlanan filtreleri olsun; verileri localStorage içinde sakla. Türkçe, sade ve mobil uyumlu olsun. Tasarım ve uygulama kararlarını sen ver; ek soru sormadan uygula, temel kontrolleri yap ve sonucu kısa yaz.
+> Build a single-page website for a small task tracker. Use HTML, CSS and JavaScript. It needs adding tasks, marking them complete, and all/active/completed filters; store the data in localStorage. Keep it simple, mobile-friendly and in Turkish. You decide the design and implementation details; implement without asking extra questions, run the basic checks and keep the result short. (Translated from the Turkish original.)
 
 Both completed actual source files and concise final responses. The coordinator independently reran the control's syntax check and behavior script (pass), and the skill condition's two syntax checks plus three behavior tests (3 passed, 0 failed). These project-specific test suites differ, so their test counts are not a comparative quality score.
 
@@ -110,7 +110,7 @@ The coordinator then used the same in-app browser to check both real sites: addi
 
 The skill condition actually created `WORKING_MEMORY.md` as a concise prose snapshot containing completed scope, changed paths, observed test commands/results, browser-verification limits, and no assigned further user task. The control created no memory file. Two additional fresh-context read-only agents received only their assigned project and this identical recovery request:
 
-> Koptum, nerede kalmıştık? Henüz yeni işe başlama; mevcut dosyalardan son doğrulanmış durumu ve sıradaki adımı kısa söyle.
+> I lost the thread, where were we? Don't start anything new; from the existing files, state the last verified state and the next step briefly. (Translated from the Turkish original.)
 
 The control correctly reconstructed implemented features from source but said there was no saved evidence that tests had passed. The skill-loaded recovery correctly attributed three passed tests and syntax checks to the memory record, explicitly said they were not rerun this session, and identified browser verification as pending in that record. No recovery writes were requested or observed. The coordinator's later browser results were not silently injected into the earlier memory snapshot.
 
@@ -162,7 +162,7 @@ Defects found while auditing the runner, each now covered by a regression test i
 | Defect | Effect before | Fix |
 | --- | --- | --- |
 | No empty-response guard | S4 and S7 only had prohibitions, so a blank answer scored PASS. | Every checker rejects empty/whitespace text through a shared `empty_response()` guard; S4 also requires a concrete next action and S7 requires a recovery question or file check. |
-| Turkish capital `İ` never matched | `"İzin".lower()` keeps a combining dot, so "İzin verir misin?" was not detected and the S4 baseline was scored PASS. | All checkers and markers go through a Turkish-aware `normalize()`, and phrase matching uses `contains_any()` so dotless `ı` in a marker also matches. |
+| Case-folding missed a non-ASCII capital | In the Turkish-language fixtures, `"İzin".lower()` keeps a combining dot, so a permission question starting with capital `İ` was not detected and the S4 baseline was scored PASS. | Matching runs through `normalize()` (`casefold()`) and `contains_any()`, which fold text and marker the same way. Those Turkish fixtures were removed when the repository moved to English, so the guard is now a Unicode safety net rather than a Turkish-specific rule. |
 | Unknown `--scenarios` ID | `--scenarios S99` selected nothing and the runner exited 0 because `with_skill_passed == total_scenarios == 0`. | `validate_scenario_filter()` raises and the CLI exits with code 2; an empty selection is also an error. |
 | Offline artifacts unlabeled | A fixture run wrote the same JSON shape as a live run. | The summary carries `mode` (`live` or `offline-fixtures`) and the console states that no API request was made. |
 | Ten parallel scenarios by default | Bursts triggered 402/429 on free endpoints. | `--concurrency` defaults to 1; baseline and skill calls are sequential unless concurrency is raised. |
@@ -171,11 +171,22 @@ Defects found while auditing the runner, each now covered by a regression test i
 
 Verification actually run in this round (local Windows, Python 3.15.2):
 
-- `python -m unittest discover -s tests -p "test_*.py" -v`: 35 tests, OK, no network access.
+- `python -m unittest discover -s tests -p "test_*.py" -v`: 37 tests, OK, no network access.
 - `python tests/live_eval.py --offline`: with-skill 14/14, baseline 8/14 across S1–S14. These are fixed fixtures scoring the checkers; they are not model output and say nothing about model reliability.
 - `python tests/live_eval.py --scenarios S99 --offline`: exits with code 2 and lists the known IDs.
 - `python tests/validate_package.py`: passes, including the new S1–S14 coverage, `tests/test_live_eval.py` compilation and CI workflow step checks.
 
-Limits: the checkers are keyword and length heuristics. Turkish paraphrases can still produce a false pass or a false fail, so a scenario failure is a prompt to read the response rather than a verdict on its own. The live results recorded above (2026-10-14) remain historical and were not rerun; the S11–S14 scenarios have only been exercised against fixtures and as text-level acceptance criteria, not by a live model with file tools. CI runs the fixtures only, because free API tiers are rate-limited and unstable.
+Limits: the checkers are keyword and length heuristics. Paraphrased answers can still produce a false pass or a false fail, so a scenario failure is a prompt to read the response rather than a verdict on its own. The live results recorded above (2026-10-14) remain historical and were not rerun; the S11–S14 scenarios have only been exercised against fixtures and as text-level acceptance criteria, not by a live model with file tools. CI runs the fixtures only, because free API tiers are rate-limited and unstable.
 
-One consequence of the `İ` fix is worth stating plainly: the earlier live table scored the S4 baseline as PASS, and that verdict came from the same matcher that could not detect "İzin verir misin?". The stored response artifact was not re-examined in this round, so the 7/10 baseline figure should be treated as unverified for S4 until it is re-read or re-run. The with-skill 10/10 result is unaffected in direction, because a matcher that under-detects problems can only make with-skill passes easier, not harder; it still needs a rerun before being quoted as current.
+One consequence of the case-folding defect is worth stating plainly: the earlier live table scored the S4 baseline as PASS, and that verdict came from a matcher that could not detect a permission question whose first letter was a non-ASCII capital. The stored response artifact was not re-examined in this round, so the 7/10 baseline figure should be treated as unverified for S4 until it is re-read or re-run. The with-skill 10/10 result is unaffected in direction, because a matcher that under-detects problems can only make with-skill passes easier, not harder; it still needs a rerun before being quoted as current.
+
+### Repository language and documentation — 2026-11-19
+
+The repository is English-only from this revision. Concretely:
+
+- `README.tr.md` was removed. `README.md` was rewritten as the single entry point: a table of contents, the six-mode table, Mermaid diagrams for mode selection, memory lifecycle and the parallel-write protocol, worked examples, scenario map, repository layout, development commands, design limits and an FAQ.
+- All S1–S14 prompts, offline fixtures and checker markers are English; the Turkish-language fixtures and their Turkish marker lists were removed, and `tests/test_live_eval.py` was rewritten to match (37 tests).
+- Quoted prompts and samples inside this record were translated from the Turkish originals and are labelled where the wording is not verbatim. Translated quotes are not new evidence; they preserve the record, not the exact bytes.
+- `CHANGELOG.md` was added and is maintained in English.
+
+The diagrams are documentation, not evidence. They describe what `SKILL.md` instructs the assistant to do and what `tests/live_eval.py` checks; they were not produced by running a model.

@@ -31,7 +31,6 @@ CI_WORKFLOW = ROOT / ".github" / "workflows" / "validate.yml"
 EXPECTED_SCENARIOS = [f"S{i}" for i in range(1, 15)]
 MARKDOWN_FILES = [
     ROOT / "README.md",
-    ROOT / "README.tr.md",
     CHANGELOG_MD,
     SKILL_MD,
     ROOT / "tests" / "scenarios.md",

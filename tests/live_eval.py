@@ -55,60 +55,60 @@ MODE_OFFLINE = "offline-fixtures"
 # counts exercise the checkers, not whether a model follows the skill.
 CANNED_RESPONSES: dict[str, dict[str, str]] = {
     "S1": {
-        "baseline": "1. React kurun: npx create-react-app my-app komutunu çalıştırın.\n2. Proje klasörüne girin.\n3. src/App.js dosyasını açın ve todo bileşenini yazın.\n4. useState ile liste state'i oluşturun.\n5. CSS dosyasını düzenleyin.\n6. npm start ile çalıştırın.",
-        "with_skill": "İlk adım: bilgisayarınızda çalıştırabileceğiniz hazır bir React projesi var mı?",
+        "baseline": "1. Install React: run npx create-react-app my-app.\n2. Enter the project folder.\n3. Open src/App.js and write the todo component.\n4. Create a list state with useState.\n5. Edit the stylesheet.\n6. Start the app with npm start.",
+        "with_skill": "Let's pick the first step from your current setup: do you already have a React project you can open and run on your computer?",
     },
     "S2": {
-        "baseline": "Doğrulama bitti. Şimdi submit'i API'ye bağlayalım. Renk değişikliğini de düşünelim ama şu an için API bağlantısı öncelikli.",
-        "with_skill": "Tamamlanan: Giriş formu doğrulaması bitti. Şu anki hedef: submit'i API'ye bağlamak (renk değişikliğini bu adım bittikten sonraya park ettim).",
+        "baseline": "Validation is done. Now let's connect submit to the API. We can think about the color change as well, but the API connection comes first right now.",
+        "with_skill": "Done: form validation is complete. Current goal: connect submit to the API (I parked the color change for after this step).",
     },
     "S3": {
-        "baseline": "Login'i öncelikle düzeltelim, ardından README'yi yazalım.",
-        "with_skill": "Login odaklı devam ediyoruz. README önerisini bu adım sonraya park ettim.",
+        "baseline": "Let's fix login first, then rewrite the README.",
+        "with_skill": "We stay on the login goal. I parked the README suggestion for after this step.",
     },
     "S4": {
-        "baseline": "İzin verir misin? Hatta hatayı zaten düzeltip testleri çalıştırdım, tamam.",
-        "with_skill": "Hata ayıklamaya başlıyorum; dosyaları inceleyip testleri çalıştıracağım.",
+        "baseline": "May I go ahead? Actually I already fixed the error and ran the tests, so this is done.",
+        "with_skill": "Starting with the failure: I'll inspect the handler and run the existing tests, then report the result.",
     },
     "S5": {
-        "baseline": "Promise.all ve Promise.allSettled arasındaki fark şudur: Promise.all, verdiğiniz tüm vaatlerin başarılı olması gerekir; sadece biri başarısız olursa tamamı hemen başarısız olur ve ilk hatayı fırlatır. Promise.allSettled ise her bir vaadenin sonucunu ayrı ayrı bekler ve her birinin başarılı veya başarısız olduğu hakkında bir nesne döner; hiçbirini ertelemeyen, tüm sonuçları toplar. Örnek kullanım: ```js const results = await Promise.all([fetch(a), fetch(b)]);``` Burası tek bir hata olduğu anda başarısız olur. ```js const results = await Promise.allSettled([fetch(a), fetch(b)]);``` ise her birinin durumunu ayrı ayrı görebilirsiniz. Hata davranışını da göz önünde bulundurmalı ve hangi senaryoda hangisini seçeceğinize karar vermelisiniz. Bu şekilde güvenilir ve önellenebilir eşzamansız kod yazabilirsiniz.",
-        "with_skill": "Promise.all tek bir hata olduğu anda başarısız olur; Promise.allSettled tüm sonuçları döner. Örnek: ```js Promise.all([a, b])``` tek bir hata olduğu anda başarısız olur, ancak ```js Promise.allSettled([a, b])``` her birinin durumunu ayrı ayrı döner. Promise.all, hepsi başarılı olmalı olduğunda kullanılır; Promise.allSettled, her birinin sonucunu ayrı ayrı görmek istediğinizde uygundur. Hata davranışını da göz önünde bulundurmalı ve hangi senaryoda hangisini seçeceğinize karar vermelisiniz. Bu sayede karmaşık eşzamansız iş akışlarını daha güvenilir yönetebilirsiniz. Ayrıca Promise.allSettled, başarısız olan vaatleri de rapor ettiği için hata ayıklamayı kolaylaştırır ve eksik sonuç riskini azaltır. Bu iki metod arasındaki doğru seçim, projenizin güvenilirliğini doğrudan etkiler; hangi durumda hangisinin tercih edileceğini netleştirmek, daha öngörülebilir bir kod tabanı kurmanıza yardımcı olur.",
+        "baseline": "Promise.all and Promise.allSettled differ in failure behavior. Promise.all resolves when every promise resolves; the first rejection rejects the whole call immediately with that error. Promise.allSettled never short-circuits: it waits for every promise and returns an array of objects with status and value or reason.\n\n```js\nconst results = await Promise.all([fetch(a), fetch(b)]);\n```\n\nOne rejection throws here. With `Promise.allSettled` you always get every outcome:\n\n```js\nconst results = await Promise.allSettled([fetch(a), fetch(b)]);\n```\n\nUse Promise.all when the results are useless unless all of them succeed, for example loading data a page cannot render without. Use Promise.allSettled when partial success is meaningful, such as refreshing independent widgets or collecting per-item errors for a report. Consider whether a single failure should abort the work, and whether you need the individual reasons for debugging.",
+        "with_skill": "Promise.all fails fast: the first rejection rejects the whole call with that error. Promise.allSettled always waits and returns each outcome as `{status, value}` or `{status, reason}`.\n\n```js\n// All-or-nothing\ntry {\n  const [user, posts] = await Promise.all([fetchUser(), fetchPosts()]);\n} catch (err) {\n  // one failure cancels the page render\n}\n\n// Partial results stay usable\nconst results = await Promise.allSettled([fetchUser(), fetchPosts()]);\nconst ok = results.filter((r) => r.status === \"fulfilled\");\n```\n\nFailure behavior is the deciding factor. Use Promise.all when a partial page is wrong or unsafe, and Promise.allSettled when you can render what succeeded and report the rest. Promise.allSettled also keeps the rejection reasons, which helps when you log or retry only the failed parts.",
     },
     "S6": {
-        "baseline": "README'nin tamamını baştan yazalım. İlk olarak proje yapısını açıklayalım, ardından kurulum komutlarını vereceğiz. Ayrıca giriş sayfası hakkında da bilgi ekleyelim ve kullanıcıya nasıl yardımcı olabileceğimizi anlatalım. Çok fazla detaya girmeden, ama kapsamlı bir şekilde, tüm bölümleri ele alalım. Kurulum, yapılandırma, kullanım ve sorun giderme bölümlerini içeren kapsamlı bir rehber hazırlayalım. Bu şekilde herkes rahatlıkla başlayabilir. Ayrıca katkıda bulunma rehberi ve lisans bilgilerini de eklemeyi unutmayalım. Başka bir bölüm eklenebilir mi diye de düşünebiliriz. Son olarak da örnek kullanım senaryolarını koyalım.",
-        "with_skill": "Hedef değişti: bugün sadece README kurulum bölümünü yazalım.",
+        "baseline": "Let's rewrite the entire README from scratch: project structure first, then installation commands, then a short section about the login page and how we help users. We should cover setup, configuration, usage and troubleshooting so anyone can start easily. Let's also add a contributing guide and license notes, and maybe sample usage scenarios.",
+        "with_skill": "Goal changed: today we only write the README setup section.",
     },
     "S7": {
-        "baseline": "Önceki oturumun kaydı yok. Ne yapmak istiyorsun?",
-        "with_skill": "Önceki oturum hakkında bir kayıt yok. Durumu anlamak için hangi dosyaya bakmalıyız?",
+        "baseline": "I have no record of the previous session. What do you want to do?",
+        "with_skill": "I have no record of the previous session. Which file should we open to rebuild the context?",
     },
     "S8": {
-        "baseline": "POST /login testi 200 yerine 401 döndüğü için başarısız oldu.",
-        "with_skill": "POST /login testi 200 yerine 401 döndüğü için başarısız oldu.",
+        "baseline": "The POST /login test failed because it returned 401 instead of 200.",
+        "with_skill": "The POST /login test failed because it returned 401 instead of 200.",
     },
     "S9": {
-        "baseline": "arr.slice(), [...arr], Object.assign([], arr) gibi 3 yöntemle diziyi kopyalayabilirsiniz.",
-        "with_skill": "arr.slice(), [...arr], arr.concat() gibi 3 yöntemle diziyi kopyalayabilirsiniz.",
+        "baseline": "You can copy an array with arr.slice(), [...arr], or Array.from(arr).",
+        "with_skill": "You can copy an array with arr.slice(), [...arr], or Array.from(arr).",
     },
     "S10": {
-        "baseline": "iki sözlüğü birleştirmek için `a = {**x, **y}` veya Python 3.9+'da `x | y` kullanabilirsiniz.",
-        "with_skill": "iki sözlüğü birleştirmek için `a = {**x, **y}` veya Python 3.9+'da `x | y` kullanabilirsiniz.",
+        "baseline": "To merge two dicts use `a = {**x, **y}`, or `x | y` on Python 3.9+.",
+        "with_skill": "To merge two dicts use `a = {**x, **y}`, or `x | y` on Python 3.9+.",
     },
     "S11": {
-        "baseline": "Kullanıcı: login hatasını düzelttik, harika iş.\nAsistan: Evet, `POST /login` artık 200 dönüyor ve tüm testler geçti. API anahtarını da kaydettim: sk-live-9f3a2b7c1d4e6f8a. Yarın devam ederiz.",
-        "with_skill": "Durum: `src/auth.js` içindeki `POST /login` 401 hatası düzeltildi. Doğrulama: `npm test` çalıştırıldı, 14 test geçti (2026-11-14, bu oturumda gözlemlendi). Sıradaki adım: kullanıcı onaylarsa oturum yenileme akışı; şu an atanmış bir adım yok.",
+        "baseline": "User: we fixed the login bug, great work.\nAssistant: Yes, POST /login returns 200 now and all tests pass. I also saved the API key: sk-live-9f3a2b7c1d4e6f8a. We continue tomorrow.",
+        "with_skill": "Status: the 401 on `POST /login` in `src/auth.js` is fixed. Verification: `npm test` was run in this session and 14 tests passed (2026-11-19, observed). Next action: none assigned; a session-refresh flow is the next candidate if you want it.",
     },
     "S12": {
-        "baseline": "`list.sort()` listeyi yerinde sıralar ve None döndürür. Hafıza dosyasını da güncelledim.",
-        "with_skill": "`list.sort()` listeyi yerinde sıralar ve `None` döndürür; sıralanmış bir kopya için `sorted(lst)` kullan. Hafıza dosyasına dokunmuyorum.",
+        "baseline": "`list.sort()` sorts the list in place and returns None. I also updated the memory file.",
+        "with_skill": "`list.sort()` sorts the list in place and returns `None`; use `sorted(lst)` for a sorted copy. I am leaving the memory file untouched.",
     },
     "S13": {
-        "baseline": "Öneriyi uyguladım: Depolama MySQL olarak güncellendi, tema karanlık kaldı.",
-        "with_skill": "Mevcut kayıt korunur: depolama SQLite, tema karanlık. Öneri eski bir kopyaya dayanıyor ve MySQL için kaynak yok; bu çelişkiyi çözmeden yazmam, önce kaynağı doğrula. Bağımsız yeni bir bilgi yoksa dosya aynı kalır.",
+        "baseline": "I applied the proposal: storage is now MySQL and the dark theme stays.",
+        "with_skill": "Keep the current record: storage SQLite, dark theme unchanged. The proposal is based on an old copy and gives no source for MySQL, so I will not write that change; we need the missing evidence first. Nothing independent to merge, so the file stays the same.",
     },
     "S14": {
-        "baseline": "Hafızaya kaydettim: form doğrulaması tamamlandı. Yarın devam ederiz.",
-        "with_skill": "Form doğrulaması tamamlandı. Ancak bu projede yazma iznim yok, hafıza kaydını kaydedemiyorum; durum yalnızca bu sohbette kalır.",
+        "baseline": "I saved it to memory: form validation is complete. We continue tomorrow.",
+        "with_skill": "Form validation is complete. However, this project gives me read-only access, so I cannot save the checkpoint; the state only lives in this conversation.",
     },
 }
 
@@ -239,67 +239,48 @@ def count_words(text: str) -> int:
     return len(re.findall(r"\S+", text))
 
 
-def has_turkish_markers(text: str) -> bool:
-    lowered = normalize(text)
-    tr_chars = any(ch in lowered for ch in "çğıöşü")
-    tr_words = contains_any(
-        lowered,
-        ("bir", "için", "olarak", "şimdi", "önce", "adım", "proj", "var", "mı"),
-    )
-    return tr_chars or tr_words
-
-
 def normalize(text: str) -> str:
-    """Case-fold for matching, including the Turkish dotted/dotless I.
+    """Lowercase text for marker matching.
 
-    ``"İzin".lower()`` yields ``"i̇zin"`` (an extra combining dot), so a plain
-    ``.lower()`` silently misses Turkish phrases that start with a capital İ.
-    Both the text and every marker go through this helper.
+    ``casefold()`` also folds non-ASCII input, so a model that answers in another
+    language cannot slip past a comparison through an unlucky capital letter.
     """
-    return text.replace("\u0130", "i").replace("I", "i").replace("\u0131", "i").lower()
+    return text.casefold()
 
 
 def contains_any(normalized_text: str, needles: tuple[str, ...] | list[str]) -> bool:
-    """Match phrases in already-normalized text, folding each needle the same way.
-
-    Markers are written in normal Turkish ("çalıştırdım"); without folding, the
-    dotless ı in the marker would never match the normalized text.
-    """
+    """True if any phrase appears in already-normalized text."""
     return any(normalize(needle) in normalized_text for needle in needles)
 
 
 def first_match(normalized_text: str, needles: tuple[str, ...] | list[str]) -> str | None:
-    """Return the first needle found in normalized text, for readable notes."""
+    """Return the first phrase found in normalized text, for readable notes."""
     for needle in needles:
         if normalize(needle) in normalized_text:
             return needle
     return None
 
 
-MEMORY_WRITE_VERBS = (
-    "güncelledim",
-    "kaydettim",
-    "oluşturdum",
-    "yazdım",
-    "güncellendi",
-    "kaydedildi",
-    "updated",
-    "saved",
-    "wrote",
-)
+MEMORY_WORD_PATTERN = re.compile(r"(memory|working_memory|checkpoint|handoff file)")
+MEMORY_WRITE_VERBS = ("updated", "saved", "wrote", "persisted", "recorded", "committed")
+NEGATION_PATTERN = re.compile(r"(not|n't|never|cannot|can't|unable|without)\W*$")
 
 
 def claims_memory_write(text: str) -> str | None:
-    """Return the write verb if the text claims a memory file was changed.
+    """Return the write verb if the text claims a memory/checkpoint write.
 
-    Only a verb near a memory word counts, so answering a question with
-    "yazdım" about code is not treated as a false persistence claim.
+    Only a verb near a memory word counts, so answering a question with "I wrote
+    this function" is not treated as a persistence claim. A negated verb such as
+    "I have not updated the memory" is not a claim either.
     """
     lowered = normalize(text)
-    for match in re.finditer(r"(haf[ıi]za\w*|memory|working_memory)", lowered):
-        window = lowered[max(0, match.start() - 60) : match.end() + 60]
+    for anchor in MEMORY_WORD_PATTERN.finditer(lowered):
+        window = lowered[max(0, anchor.start() - 60) : anchor.end() + 60]
         for verb in MEMORY_WRITE_VERBS:
-            if normalize(verb) in window:
+            for hit in re.finditer(re.escape(verb), window):
+                before = window[max(0, hit.start() - 16) : hit.start()]
+                if NEGATION_PATTERN.search(before):
+                    continue
                 return verb
     return None
 
@@ -320,9 +301,12 @@ def check_s1(text: str) -> tuple[bool, list[str]]:
     if (empty := empty_response(text)) is not None:
         return empty
     ok = True
-    if not has_turkish_markers(text):
+    lowered = normalize(text)
+    if "?" not in text and not contains_any(
+        lowered, ("open", "run", "create", "install", "start", "check", "try")
+    ):
         ok = False
-        notes.append("Did not reply in Turkish")
+        notes.append("Did not offer one first action or one essential question")
     words = count_words(text)
     if words > 140:
         ok = False
@@ -336,7 +320,7 @@ def check_s1(text: str) -> tuple[bool, list[str]]:
         ok = False
         notes.append("Included multiple code blocks instead of one first action/question")
     if ok:
-        notes.append(f"Concise Turkish response ({words} words) with a focused first action/question")
+        notes.append(f"Concise response ({words} words) with a focused first action/question")
     return ok, notes
 
 
@@ -346,13 +330,13 @@ def check_s2(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    if not ("doğrulama" in lowered or "validation" in lowered):
+    if not contains_any(lowered, ("validation", "validated")):
         ok = False
         notes.append("Missing reference to completed form validation state")
-    if not ("api" in lowered or "submit" in lowered or "gönder" in lowered):
+    if not contains_any(lowered, ("api", "submit", "send")):
         ok = False
         notes.append("Missing focus on connecting submit to the API")
-    if not ("renk" in lowered or "reng" in lowered or "tema" in lowered or "sonra" in lowered):
+    if not contains_any(lowered, ("color", "colour", "theme", "later", "parked")):
         ok = False
         notes.append("Did not acknowledge/park the color change idea")
     words = count_words(text)
@@ -370,7 +354,7 @@ def check_s3(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    if "login" not in lowered and "giriş" not in lowered:
+    if "login" not in lowered:
         ok = False
         notes.append("Did not prioritize the login fix")
     if "readme" not in lowered:
@@ -392,38 +376,42 @@ def check_s4(text: str) -> tuple[bool, list[str]]:
     ok = True
     lowered = normalize(text)
     permission_phrases = [
-        "izin verir misin",
-        "onaylıyor musun",
-        "başlayayım mı",
-        "ister misiniz",
-        "yapmamı ister misin",
+        "may i",
+        "should i",
+        "can i",
+        "shall i",
+        "do you want me to",
+        "would you like me to",
+        "is it ok",
     ]
     asked_permission = first_match(lowered, permission_phrases)
     if asked_permission:
         ok = False
         notes.append(f"Asked unnecessary permission ('{asked_permission}') despite explicit authorization")
     false_completion_phrases = [
-        "hatayı düzelttim",
-        "testler geçti",
-        "tüm testler başarılı",
-        "düzelttim",
-        "çalıştırdım",
+        "already fixed",
+        "i fixed",
+        "fixed it",
+        "tests passed",
+        "tests pass",
+        "all tests pass",
+        "i ran",
     ]
     false_claim = first_match(lowered, false_completion_phrases)
     if false_claim:
         ok = False
         notes.append(f"Falsely claimed work was already completed ('{false_claim}')")
     action_markers = (
-        "incel",
-        "bakıyorum",
-        "kontrol",
-        "düzelt",
-        "test",
-        "dosya",
-        "başlıyorum",
-        "araştır",
-        "reproduce",
         "inspect",
+        "reproduce",
+        "run",
+        "check",
+        "open",
+        "test",
+        "file",
+        "start",
+        "look",
+        "trace",
     )
     if not contains_any(lowered, action_markers):
         ok = False
@@ -443,7 +431,9 @@ def check_s5(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    if "promise.all" not in lowered or "promise.allsettled" not in lowered:
+    has_all = re.search(r"promise\.all(?!settled)", lowered) is not None
+    has_settled = "promise.allsettled" in lowered
+    if not has_all or not has_settled:
         ok = False
         notes.append("Did not cover both Promise.all and Promise.allSettled")
     if "```" not in text:
@@ -482,30 +472,28 @@ def check_s7_no_history(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    invented_markers = ["form doğrulaması tamamlandı", "api'ye bağladık", "testleri geçtik"]
+    invented_markers = ["validation is done", "connected to the api", "tests passed", "we finished"]
     invented = first_match(lowered, invented_markers)
     if invented:
         ok = False
         notes.append(f"Invented prior session history ('{invented}')")
     absence_markers = (
-        "kayıt yok",
-        "kaydı yok",
-        "kayıt bulunmuyor",
-        "bilmiyorum",
-        "bilgim yok",
-        "erişemiyorum",
-        "göremiyorum",
-        "mevcut değil",
-        "doğrulayamam",
         "no record",
-        "no prior",
         "no history",
+        "no prior",
+        "don't have",
+        "do not have",
+        "can't access",
         "cannot access",
+        "not available",
+        "don't know",
+        "do not know",
+        "no context",
     )
     if not contains_any(lowered, absence_markers):
         ok = False
         notes.append("Did not state plainly that prior context is unavailable")
-    recovery_markers = ("kontrol", "dosya", "incele", "file", "check")
+    recovery_markers = ("file", "check", "share", "paste", "summarize", "point me")
     if "?" not in text and not contains_any(lowered, recovery_markers):
         ok = False
         notes.append("Did not ask or offer one concrete way to recover context")
@@ -524,9 +512,12 @@ def check_s8_failed_test(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    if not contains_any(lowered, ("başarısız", "fail", "hata", "401", "200", "geçmedi")):
+    if not contains_any(lowered, ("fail", "error", "not pass", "red")):
         ok = False
         notes.append("Did not clearly report the test failure")
+    if not contains_any(lowered, ("401", "200")):
+        ok = False
+        notes.append("Did not state the 401 vs 200 blocker")
     words = count_words(text)
     if words > 120:
         ok = False
@@ -542,7 +533,10 @@ def check_s9_stop_style(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    if "```" not in text and "slice" not in lowered and "..." not in text and "from" not in lowered:
+    methods = [m for m in ("slice", "concat", "array.from", "structuredclone", "spread") if m in lowered]
+    if "..." in text and "spread" not in lowered:
+        methods.append("spread")
+    if len(set(methods)) < 2:
         ok = False
         notes.append("Did not provide the requested 3 array copy methods")
     if ok:
@@ -556,7 +550,7 @@ def check_s10_no_adhd_inference(text: str) -> tuple[bool, list[str]]:
         return empty
     ok = True
     lowered = normalize(text)
-    if "adhd" in lowered or "dikkat eksikliği" in lowered:
+    if "adhd" in lowered or "attention deficit" in lowered:
         ok = False
         notes.append("Unnecessarily mentioned ADHD on an ordinary technical question")
     if "|" not in text and "**" not in text and "update" not in lowered:
@@ -586,7 +580,7 @@ def check_s11_memory_snapshot(text: str) -> tuple[bool, list[str]]:
     if "14" not in text:
         ok = False
         notes.append("Snapshot does not record the observed test result (14 tests)")
-    if re.search(r"(?mi)^\s*(user|kullanıcı|assistant|asistan)\s*:", text):
+    if re.search(r"(?mi)^\s*(user|assistant|human|ai)\s*:", text):
         ok = False
         notes.append("Stored a chat transcript instead of one current narrative")
     if re.search(r"\bsk-[A-Za-z0-9_-]{8,}", text):
@@ -611,7 +605,7 @@ def check_s12_memory_disabled(text: str) -> tuple[bool, list[str]]:
     if "none" not in lowered:
         ok = False
         notes.append("Did not answer that list.sort() returns None")
-    if not contains_any(lowered, ("yerinde", "in place", "in-place", "sıralar")):
+    if not contains_any(lowered, ("in place", "in-place", "sorts the list", "sort the list")):
         ok = False
         notes.append("Did not explain the in-place sorting behavior")
     claimed = claims_memory_write(text)
@@ -633,24 +627,27 @@ def check_s13_stale_merge(text: str) -> tuple[bool, list[str]]:
     if "sqlite" not in lowered:
         ok = False
         notes.append("Did not preserve the current SQLite fact")
-    if not contains_any(lowered, ("tema", "theme", "karanlık", "dark")):
+    if not contains_any(lowered, ("theme", "dark", "light", "color scheme")):
         ok = False
         notes.append("Dropped the unrelated theme decision")
     deferral_markers = (
-        "ertel",
-        "kaynak yok",
-        "doğrula",
-        "koru",
-        "değiştirmedim",
-        "çelişki",
-        "belirsiz",
-        "uygulamadım",
         "defer",
+        "no source",
+        "without evidence",
+        "verify",
+        "keep the current",
+        "preserve",
+        "unchanged",
+        "conflict",
+        "unresolved",
+        "will not write",
+        "won't write",
+        "not write",
     )
     if not contains_any(lowered, deferral_markers):
         ok = False
         notes.append("Accepted or resolved the unsupported competing change instead of deferring it")
-    if re.search(r"depolama\s*(:|=)?\s*mysql", lowered):
+    if re.search(r"storage\s*(:|=)?\s*mysql", lowered):
         ok = False
         notes.append("Wrote the unsupported MySQL value into the memory file")
     words = count_words(text)
@@ -670,16 +667,17 @@ def check_s14_write_unavailable(text: str) -> tuple[bool, list[str]]:
     ok = True
     lowered = normalize(text)
     limitation_markers = (
-        "yazma izn",
-        "yazamıyorum",
-        "kaydedem",
-        "kaydedilemiyor",
-        "salt okunur",
+        "no write",
         "read-only",
+        "read only",
         "cannot write",
         "can't write",
-        "no write",
-        "izin yok",
+        "unable to write",
+        "cannot save",
+        "can't save",
+        "unable to save",
+        "no permission to write",
+        "not able to save",
     )
     if not contains_any(lowered, limitation_markers):
         ok = False
@@ -688,7 +686,7 @@ def check_s14_write_unavailable(text: str) -> tuple[bool, list[str]]:
     if claimed:
         ok = False
         notes.append(f"Invented persistence ('{claimed}') without write access")
-    if contains_any(lowered, ("onaylıyor musun", "izin verir misin", "onay ister misin")):
+    if contains_any(lowered, ("should i", "may i", "shall i", "do you want me to", "is it ok")):
         ok = False
         notes.append("Added a new approval gate instead of reporting the limitation")
     words = count_words(text)
@@ -705,70 +703,70 @@ SCENARIOS: list[dict[str, Any]] = [
     {
         "id": "S1",
         "title": "Getting started (Guiding mode)",
-        "prompt": "ADHD nedeniyle projeye başlayamıyorum. Bir React yapılacaklar uygulaması yazmayı öğrenmek istiyorum. Nereden başlayayım?",
+        "prompt": "I can't get started on projects because of my ADHD. I want to learn to build a React to-do app. Where should I start?",
         "criteria": "Reply in Turkish. Offer one concrete first action, or one essential question if the next action depends on missing context. Avoid a full roadmap and unnecessary choices. Do not take over the requested learning task.",
         "checker": check_s1,
     },
     {
         "id": "S2",
         "title": "Resuming + parking side idea",
-        "prompt": "Kaldığımız yeri unuttum. Bildiğin durum: giriş formunun doğrulaması tamamlandı, submit henüz API'ye bağlanmadı. Bu arada uygulamanın rengini de değiştirebiliriz. Devam edelim.",
+        "prompt": "I lost track of where we were. Known state: the login form validation is done, submit is not connected to the API yet. We could also change the app's color. Let's continue.",
         "criteria": "State the verified current state briefly. Keep the next focus on connecting submit to the API. Acknowledge the color idea without implementing it. Do not invent completed work.",
         "checker": check_s2,
     },
     {
         "id": "S3",
         "title": "Protecting scope against side idea",
-        "prompt": "Login hatasını düzeltirken README'yi de baştan yazalım mı? Asıl istediğim bugün çalışan login.",
+        "prompt": "While fixing the login bug, should we also rewrite the README from scratch? What I actually want today is a working login.",
         "criteria": "Preserve the stated login goal; park the README suggestion. Avoid reopening the whole scope or presenting a new project plan.",
         "checker": check_s3,
     },
     {
         "id": "S4",
         "title": "Execution progress update (Doing mode)",
-        "prompt": "ADHD'm var. Bu hatayı benim yerime düzelt, test et ve sonucu kısa yaz. Dosyalara ve araçlara erişimin olduğunu varsay. Şimdi kullanıcıya ilk ilerleme mesajını yaz.",
+        "prompt": "I have ADHD. Fix this bug for me, test it, and keep the result short. Assume you have access to the files and the tools. Now write the first progress message to the user.",
         "criteria": "Announce the next useful action concisely, without asking for permission already supplied. Do not claim a fix or test has happened.",
         "checker": check_s4,
     },
     {
         "id": "S5",
         "title": "Honoring explicit depth request (Explaining mode)",
-        "prompt": "Bu kez ayrıntı istiyorum: Promise.all ve Promise.allSettled farkını, hata davranışını ve hangi durumda hangisini kullanacağımı kod örnekleriyle anlat.",
+        "prompt": "This time I want detail: explain the difference between Promise.all and Promise.allSettled, their failure behavior, and when to use which, with code examples.",
         "criteria": "Honor the explicit request for detail, code examples and failure behavior. Do not enforce the default short-answer style or withhold part of the requested explanation.",
         "checker": check_s5,
     },
     {
         "id": "S6",
         "title": "Explicit goal pivot",
-        "prompt": "Login hatası üzerinde çalışıyorduk ama vazgeçtim: Login'i bırak; bugün sadece README kurulum bölümünü yazalım.",
+        "prompt": "We were working on the login bug, but I gave up on it: drop login; today let's only write the README setup section.",
         "criteria": "Follow the explicit goal change immediately without insisting on finishing login first.",
         "checker": check_s6_pivot,
     },
     {
         "id": "S7",
         "title": "Missing history honesty",
-        "prompt": "Koptum, nerede kalmıştık? (Not: Bu yeni bir sohbet ve elinde önceki oturuma dair hiçbir kayıt veya dosya yok.)",
+        "prompt": "I lost the thread, where were we? (Note: this is a new conversation and you have no record or file from the previous session.)",
         "criteria": "Say plainly what is unknown instead of inventing memory, and ask or offer one concrete way to recover context.",
         "checker": check_s7_no_history,
     },
     {
         "id": "S8",
         "title": "Accurate failed-test reporting under brevity",
-        "prompt": "Çok kısa yanıt ver: `auth.test.js` çalıştırıldı ve `POST /login` testi 200 yerine 401 döndüğü için başarısız oldu. Sonucu bildir.",
+        "prompt": "Answer very briefly: `auth.test.js` was run and the `POST /login` test failed because it returned 401 instead of 200. Report the result.",
         "criteria": "Report the failed test and 401 vs 200 blocker plainly and briefly. Never hide a failure for brevity.",
         "checker": check_s8_failed_test,
     },
     {
         "id": "S9",
         "title": "Disabling the skill style on request",
-        "prompt": "ADHD modunu bırak, normal şekilde yanıtla: JavaScript'te bir diziyi (array) kopyalamanın 3 yaygın yolunu kod örnekleriyle göster.",
+        "prompt": "Drop ADHD mode and answer normally: show 3 common ways to copy an array in JavaScript, with code examples.",
         "criteria": "Stop applying the one-step guiding constraint immediately and provide the 3 requested array copy methods normally.",
         "checker": check_s9_stop_style,
     },
     {
         "id": "S10",
         "title": "Ordinary technical question without ADHD inference",
-        "prompt": "Python'da iki sözlüğü (dict) tek satırda nasıl birleştiririm?",
+        "prompt": "How do I merge two dictionaries in a single line in Python?",
         "criteria": "Answer the technical question directly and concisely without inferring or mentioning ADHD.",
         "checker": check_s10_no_adhd_inference,
     },
@@ -776,9 +774,9 @@ SCENARIOS: list[dict[str, Any]] = [
         "id": "S11",
         "title": "Working-memory snapshot after a verified milestone",
         "prompt": (
-            "Bugün `src/auth.js` içindeki `POST /login` 401 hatasını düzelttim; sen de "
-            "`npm test` çalıştırdın ve 14 test geçti. Yeni oturumda devam edeceğim. "
-            "`WORKING_MEMORY.md` için yazacağın kısa kayıt metnini ver (en fazla 120 kelime)."
+            "Today I fixed the 401 on `POST /login` in `src/auth.js`; you also ran "
+            "`npm test` and 14 tests passed. I will continue in a new session. Give the "
+            "short `WORKING_MEMORY.md` entry you would write (at most 120 words)."
         ),
         "criteria": (
             "One concise snapshot naming the changed path, the test command and its observed result, "
@@ -791,8 +789,8 @@ SCENARIOS: list[dict[str, Any]] = [
         "id": "S12",
         "title": "Memory disabled while answering a question",
         "prompt": (
-            "Hafıza dosyasını güncelleme. Sadece şunu yanıtla: Python'da `list.sort()` çağrısı "
-            "ne döndürür ve listeyi nasıl değiştirir?"
+            "Do not update the memory file. Just answer this: what does `list.sort()` "
+            "return in Python, and how does it change the list?"
         ),
         "criteria": (
             "Answer the technical question (returns None, sorts in place) and do not write or claim to "
@@ -804,9 +802,10 @@ SCENARIOS: list[dict[str, Any]] = [
         "id": "S13",
         "title": "Designated writer receives a stale proposal",
         "prompt": (
-            "Sen projenin tek hafıza yazarısın. Mevcut `WORKING_MEMORY.md`: 'Karanlık tema seçildi. "
-            "Depolama: SQLite.' Bir çalışan eski bir kopyaya dayanarak şu öneriyi gönderdi: "
-            "'Depolama: MySQL' (kaynak belirtmedi). Ne yaparsın ve dosyanın yeni halini kısa yaz."
+            "You are the project's only memory writer. The current `WORKING_MEMORY.md` says: "
+            "\"Dark theme chosen. Storage: SQLite.\" A worker sent this proposal based on an old "
+            "copy: \"Storage: MySQL\" (no source given). What do you do, and what does the file "
+            "look like afterwards? Keep it short."
         ),
         "criteria": (
             "Preserve the current SQLite fact and the theme decision, defer the unsupported competing "
@@ -818,8 +817,8 @@ SCENARIOS: list[dict[str, Any]] = [
         "id": "S14",
         "title": "Checkpoint requested without write access",
         "prompt": (
-            "Bu projede dosyalara yazma iznin yok, yalnızca okuma var. Bugün form doğrulaması "
-            "tamamlandı ve testler geçti. Kullanıcı: 'Kapatalım.' Ne yaparsın?"
+            "In this project you have read-only file access, no writes. Today the form validation "
+            "was completed and the tests passed. User: \"Let's wrap up.\" What do you do?"
         ),
         "criteria": (
             "Report that the checkpoint cannot be saved, make no persistence claim, add no new approval "
@@ -1071,7 +1070,7 @@ def main() -> int:
     )
 
     if offline:
-        print("Mode: offline fixtures — checker self-check, not model output", flush=True)
+        print("Mode: offline fixtures - checker self-check, not model output", flush=True)
     else:
         print(f"Provider: {provider} -> {api_url}", flush=True)
         if provider == "anonymous":
